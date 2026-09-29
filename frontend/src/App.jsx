@@ -31,7 +31,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/register/",
+        "https://otp-login-project-i2wt.onrender.com/api/register/",
         {
           method: "POST",
           headers: {
@@ -71,7 +71,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/recognize-user/",
+        "https://otp-login-project-i2wt.onrender.com/api/recognize-user/",
         {
           method: "POST",
           headers: {
@@ -104,7 +104,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/verify-otp/",
+        "https://otp-login-project-i2wt.onrender.com/api/verify-otp/",
         {
           method: "POST",
           headers: {
@@ -122,7 +122,7 @@ function App() {
       if (response.ok) {
         // Get registered user details
         const userResponse = await fetch(
-          "http://127.0.0.1:8000/api/recognize-user/",
+          "https://otp-login-project-i2wt.onrender.com/api/recognize-user/",
           {
             method: "POST",
             headers: {
@@ -167,7 +167,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/submit-checkout/",
+        "https://otp-login-project-i2wt.onrender.com/api/submit-checkout/",
         {
           method: "POST",
           headers: {
