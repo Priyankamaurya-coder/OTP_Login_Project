@@ -16,9 +16,9 @@ https://github.com/Priyankamaurya-coder/OTP_Login_Project
 
 This project implements an OTP-based user recognition and login flow.
 
-A new user can register using their email, first name, and last name. After successful registration, a random 6-digit numeric code is generated.
+A new user can register using their email, first name, and last name. After successful registration, a random 6-digit numeric code is generated and displayed to the user.
 
-When a registered user enters their email during checkout, the system recognizes the user and displays an OTP login modal. The user can either enter the correct code to log in or skip login and continue with checkout.
+When a registered user enters their email during checkout, the system recognizes the user and displays an OTP login modal. The user can enter the correct code to log in or skip login and continue with checkout.
 
 The checkout form collects the user's email, phone number, and shipping address and stores the submitted information in the database.
 
@@ -28,27 +28,28 @@ The checkout form collects the user's email, phone number, and shipping address 
 
 * Register using email, first name, and last name
 * Validate required fields
-* Generate a random 6-digit registration code
-* Display the generated code after successful registration
+* Generate a random 6-digit numeric code
+* Display the generated code after registration
 
 ### User Recognition & Login
 
 * Real-time email format validation
-* Check whether the email belongs to a registered user
-* Display OTP login modal for registered users
-* Verify the 6-digit code
-* Display an error for an incorrect or expired code
+* Check whether an email belongs to a registered user
+* Recognize registered users while filling the checkout form
+* Display an OTP login modal
+* Verify the 6-digit OTP
+* Show an error for incorrect or expired OTP
 * Option to skip login
 * Display the logged-in user's name
 
 ### Checkout
 
-* Email field
-* Phone number field
-* Shipping address field
+* Collect email
+* Collect phone number
+* Collect shipping address
 * Submit checkout information
 * Store checkout information in the database
-* No payment processing is included
+* No payment processing
 
 ## Technology Stack
 
@@ -111,7 +112,7 @@ OTP_Login_Project/
 
 ## Local Setup
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Priyankamaurya-coder/OTP_Login_Project.git
@@ -120,15 +121,16 @@ cd OTP_Login_Project
 
 ### 2. Backend Setup
 
-Open a terminal inside the `backend` folder.
-
-Create a virtual environment:
+Open a terminal inside the `backend` folder:
 
 ```bash
+cd backend
 python -m venv venv
 ```
 
-Activate it on Windows:
+Activate the virtual environment:
+
+**Windows CMD:**
 
 ```cmd
 venv\Scripts\activate
@@ -140,7 +142,7 @@ Install the required packages:
 pip install -r requirements.txt
 ```
 
-Run migrations:
+Run database migrations:
 
 ```bash
 python manage.py migrate
@@ -160,17 +162,11 @@ http://127.0.0.1:8000/
 
 ### 3. Frontend Setup
 
-Open another terminal inside the `frontend` folder.
-
-Install dependencies:
+Open another terminal inside the `frontend` folder:
 
 ```bash
+cd frontend
 npm install
-```
-
-Start the React development server:
-
-```bash
 npm run dev
 ```
 
@@ -182,9 +178,9 @@ http://localhost:5173/
 
 ## Database
 
-The project uses PostgreSQL for the deployed application.
+The deployed application uses PostgreSQL.
 
-The database schema is available in:
+The database schema is included in:
 
 ```text
 backend/database_schema.sql
@@ -194,30 +190,16 @@ backend/database_schema.sql
 
 The application is deployed using Render.
 
-* Frontend: Render Static Site
-* Backend: Render Web Service
-* Database: Render PostgreSQL
+* **Frontend:** Render Static Site
+* **Backend:** Render Web Service
+* **Database:** Render PostgreSQL
 
 ## Project Files
 
 ### `prompts.md`
 
-Contains the prompts used with an LLM during the development of this project.
+Contains the prompts used with an LLM during the development of the project.
 
 ### `database_schema.sql`
 
-Contains the database schema for the project.
-
-## Assignment
-
-This project was developed as a take-home assignment for the Dhee Coding Lab placement process.
-
-The application demonstrates:
-
-* User registration
-* OTP-based authentication
-* User recognition
-* Checkout form handling
-* REST API development
-* Database integration
-* Frontend and backend deployment
+Contains the database schema used by the project.
