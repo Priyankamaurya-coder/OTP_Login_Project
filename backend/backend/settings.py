@@ -122,6 +122,7 @@ STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://otp-login-project-1.onrender.com",
 ]
 
 
