@@ -20,12 +20,33 @@ function App() {
   const [showOtpModal, setShowOtpModal] = useState(false)
   const [loggedInUser, setLoggedInUser] = useState(null)
 
+  // Messages
   const [message, setMessage] = useState("")
+
+  // Success popup
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+
+  // Error popup
+  const [showErrorPopup, setShowErrorPopup] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+
+  // Show success popup
+  const showSuccess = (text) => {
+    setSuccessMessage(text)
+    setShowSuccessPopup(true)
+  }
+
+  // Show error popup
+  const showError = (text) => {
+    setErrorMessage(text)
+    setShowErrorPopup(true)
+  }
 
   // Registration
   const registerUser = async () => {
     if (!email || !firstName || !lastName) {
-      setMessage("Please fill all fields")
+      showError("Please fill in all registration fields.")
       return
     }
 
@@ -48,15 +69,20 @@ function App() {
       const data = await response.json()
 
       if (response.ok) {
-        setMessage("Registration successful")
+        setMessage("")
         setRegistrationOtp(data.otp)
+
+        showSuccess(
+          "Registration successful! Your 6-digit verification code is displayed below."
+        )
+
         console.log("Registration OTP:", data.otp)
       } else {
-        setMessage(data.error)
+        showError(data.error || "Registration failed.")
       }
     } catch (error) {
       console.log(error)
-      setMessage("Something went wrong")
+      showError("Unable to connect to the server. Please try again.")
     }
   }
 
@@ -98,7 +124,7 @@ function App() {
   // Verify registration OTP
   const verifyLoginOtp = async () => {
     if (!/^\d{6}$/.test(loginOtp)) {
-      setMessage("OTP must be exactly 6 digits")
+      showError("OTP must be exactly 6 digits.")
       return
     }
 
@@ -139,13 +165,15 @@ function App() {
         setLoggedInUser(userData.user)
         setShowOtpModal(false)
         setLoginOtp("")
-        setMessage("Login successful")
+        setMessage("")
+
+        showSuccess("Verification successful! You are now logged in.")
       } else {
-        setMessage(data.error)
+        showError(data.error || "Invalid OTP.")
       }
     } catch (error) {
       console.log(error)
-      setMessage("Something went wrong")
+      showError("Unable to verify the OTP. Please try again.")
     }
   }
 
@@ -161,7 +189,7 @@ function App() {
     e.preventDefault()
 
     if (!checkoutEmail || !phoneNumber || !shippingAddress) {
-      setMessage("Please fill all checkout fields")
+      showError("Please fill in all checkout fields.")
       return
     }
 
@@ -184,13 +212,17 @@ function App() {
       const data = await response.json()
 
       if (response.ok) {
-        setMessage("Checkout information submitted successfully")
+        setMessage("")
+
+        showSuccess(
+          "Checkout successful! Your information has been submitted successfully."
+        )
       } else {
-        setMessage(data.error)
+        showError(data.error || "Checkout submission failed.")
       }
     } catch (error) {
       console.log(error)
-      setMessage("Something went wrong")
+      showError("Unable to submit checkout. Please try again.")
     }
   }
 
@@ -198,51 +230,78 @@ function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f7f8fa",
+        background:
+          "linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%)",
         fontFamily: "Arial, sans-serif",
         padding: "40px 20px",
+        boxSizing: "border-box",
       }}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: "420px",
+          maxWidth: "450px",
           margin: "0 auto",
           background: "#ffffff",
-          padding: "35px",
-          borderRadius: "12px",
+          padding: "38px",
+          borderRadius: "18px",
           border: "1px solid #e5e7eb",
-          boxShadow: "0 4px 18px rgba(0, 0, 0, 0.06)",
+          boxShadow: "0 15px 40px rgba(15, 23, 42, 0.10)",
           boxSizing: "border-box",
         }}
       >
-        <h1
-          style={{
-            textAlign: "center",
-            fontSize: "28px",
-            margin: "0",
-            color: "#111827",
-          }}
-        >
-          OTP Login
-        </h1>
+        {/* HEADER */}
+        <div style={{ textAlign: "center", marginBottom: "30px" }}>
+          <div
+            style={{
+              width: "58px",
+              height: "58px",
+              borderRadius: "16px",
+              background: "#2563eb",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              fontSize: "25px",
+              fontWeight: "bold",
+            }}
+          >
+            OTP
+          </div>
 
-        <p
-          style={{
-            textAlign: "center",
-            color: "#6b7280",
-            fontSize: "14px",
-            marginTop: "10px",
-            marginBottom: "30px",
-          }}
-        >
-          Registration and secure checkout
-        </p>
+          <h1
+            style={{
+              margin: "0",
+              fontSize: "28px",
+              color: "#111827",
+              fontWeight: "700",
+            }}
+          >
+            OTP Login
+          </h1>
+
+          <p
+            style={{
+              color: "#6b7280",
+              fontSize: "14px",
+              marginTop: "10px",
+              marginBottom: "0",
+            }}
+          >
+            Secure registration and checkout
+          </p>
+        </div>
 
         {/* REGISTRATION */}
         {page === "register" && (
           <>
-            <h2 style={headingStyle}>Registration</h2>
+            <h2 style={headingStyle}>Create your account</h2>
+
+            <p style={descriptionStyle}>
+              Enter your details to register and receive your verification
+              code.
+            </p>
 
             <input
               type="text"
@@ -275,10 +334,38 @@ function App() {
               Register
             </button>
 
+            {/* REGISTRATION CODE */}
             {registrationOtp && (
-              <p style={codeStyle}>
-                Registration code: <strong>{registrationOtp}</strong>
-              </p>
+              <div
+                style={{
+                  marginTop: "20px",
+                  padding: "16px",
+                  background: "#eff6ff",
+                  border: "1px solid #bfdbfe",
+                  borderRadius: "10px",
+                  textAlign: "center",
+                }}
+              >
+                <p
+                  style={{
+                    margin: "0 0 7px",
+                    color: "#1e40af",
+                    fontSize: "13px",
+                  }}
+                >
+                  Your verification code
+                </p>
+
+                <strong
+                  style={{
+                    fontSize: "26px",
+                    letterSpacing: "5px",
+                    color: "#1d4ed8",
+                  }}
+                >
+                  {registrationOtp}
+                </strong>
+              </div>
             )}
 
             <button
@@ -288,7 +375,7 @@ function App() {
               }}
               style={linkButtonStyle}
             >
-              Continue to Checkout
+              Continue to Checkout →
             </button>
           </>
         )}
@@ -298,20 +385,36 @@ function App() {
           <>
             <h2 style={headingStyle}>Checkout</h2>
 
+            <p style={descriptionStyle}>
+              Enter your details to continue with checkout.
+            </p>
+
+            {/* LOGGED IN USER */}
             {loggedInUser && (
               <div
                 style={{
-                  background: "#f3f4f6",
-                  padding: "12px",
-                  borderRadius: "7px",
-                  marginBottom: "20px",
+                  background: "#ecfdf5",
+                  border: "1px solid #a7f3d0",
+                  padding: "14px",
+                  borderRadius: "10px",
+                  marginBottom: "22px",
                   fontSize: "14px",
-                  color: "#374151",
+                  color: "#065f46",
                 }}
               >
-                Welcome,{" "}
+                <div
+                  style={{
+                    fontSize: "12px",
+                    marginBottom: "4px",
+                    color: "#047857",
+                  }}
+                >
+                  ✓ Verified account
+                </div>
+
                 <strong>
-                  {loggedInUser.first_name} {loggedInUser.last_name}
+                  Welcome, {loggedInUser.first_name}{" "}
+                  {loggedInUser.last_name}
                 </strong>
               </div>
             )}
@@ -365,11 +468,12 @@ function App() {
               }}
               style={linkButtonStyle}
             >
-              Back to Registration
+              ← Back to Registration
             </button>
           </>
         )}
 
+        {/* OLD MESSAGE - only used if needed */}
         {message && (
           <p
             style={{
@@ -387,52 +491,61 @@ function App() {
 
       {/* OTP MODAL */}
       {showOtpModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: "0",
-            background: "rgba(0, 0, 0, 0.35)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "20px",
-          }}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "350px",
-              background: "#ffffff",
-              padding: "30px",
-              borderRadius: "12px",
-              boxShadow: "0 8px 30px rgba(0, 0, 0, 0.15)",
-              boxSizing: "border-box",
-            }}
-          >
+        <div style={modalOverlayStyle}>
+          <div style={otpModalStyle}>
+            <div
+              style={{
+                width: "52px",
+                height: "52px",
+                borderRadius: "50%",
+                background: "#eff6ff",
+                color: "#2563eb",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "18px",
+                fontSize: "22px",
+                fontWeight: "bold",
+              }}
+            >
+              #
+            </div>
+
             <h2
               style={{
                 marginTop: "0",
+                marginBottom: "10px",
                 color: "#111827",
+                fontSize: "23px",
               }}
             >
-              Login with OTP
+              Verify your account
             </h2>
 
             <p
               style={{
                 color: "#6b7280",
                 fontSize: "14px",
+                lineHeight: "1.6",
+                marginBottom: "20px",
               }}
             >
-              We recognized your email. Enter your registration code.
+              We recognized your email. Enter the 6-digit registration code to
+              continue.
             </p>
 
             <input
               type="text"
               placeholder="Enter 6-digit code"
               value={loginOtp}
+              maxLength="6"
               onChange={(e) => setLoginOtp(e.target.value)}
-              style={inputStyle}
+              style={{
+                ...inputStyle,
+                textAlign: "center",
+                fontSize: "20px",
+                letterSpacing: "4px",
+              }}
             />
 
             <button
@@ -448,19 +561,117 @@ function App() {
             >
               Skip Login
             </button>
+          </div>
+        </div>
+      )}
 
-            {message && (
-              <p
-                style={{
-                  textAlign: "center",
-                  marginTop: "15px",
-                  fontSize: "14px",
-                  color: "#374151",
-                }}
-              >
-                {message}
-              </p>
-            )}
+      {/* SUCCESS POPUP */}
+      {showSuccessPopup && (
+        <div style={modalOverlayStyle}>
+          <div style={successPopupStyle}>
+            <div
+              style={{
+                width: "68px",
+                height: "68px",
+                borderRadius: "50%",
+                background: "#dcfce7",
+                color: "#16a34a",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 18px",
+                fontSize: "34px",
+                fontWeight: "bold",
+              }}
+            >
+              ✓
+            </div>
+
+            <h2
+              style={{
+                margin: "0 0 10px",
+                color: "#166534",
+                fontSize: "23px",
+              }}
+            >
+              Success!
+            </h2>
+
+            <p
+              style={{
+                margin: "0 auto 24px",
+                color: "#4b5563",
+                fontSize: "14px",
+                lineHeight: "1.6",
+                maxWidth: "300px",
+              }}
+            >
+              {successMessage}
+            </p>
+
+            <button
+              onClick={() => setShowSuccessPopup(false)}
+              style={successButtonStyle}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ERROR POPUP */}
+      {showErrorPopup && (
+        <div style={modalOverlayStyle}>
+          <div style={successPopupStyle}>
+            <div
+              style={{
+                width: "68px",
+                height: "68px",
+                borderRadius: "50%",
+                background: "#fee2e2",
+                color: "#dc2626",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 18px",
+                fontSize: "30px",
+                fontWeight: "bold",
+              }}
+            >
+              !
+            </div>
+
+            <h2
+              style={{
+                margin: "0 0 10px",
+                color: "#991b1b",
+                fontSize: "23px",
+              }}
+            >
+              Something went wrong
+            </h2>
+
+            <p
+              style={{
+                margin: "0 auto 24px",
+                color: "#4b5563",
+                fontSize: "14px",
+                lineHeight: "1.6",
+                maxWidth: "300px",
+              }}
+            >
+              {errorMessage}
+            </p>
+
+            <button
+              onClick={() => setShowErrorPopup(false)}
+              style={{
+                ...successButtonStyle,
+                background: "#dc2626",
+              }}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}
@@ -468,45 +679,59 @@ function App() {
   )
 }
 
+/* ---------------- STYLES ---------------- */
+
 const inputStyle = {
   width: "100%",
-  padding: "12px",
+  padding: "13px 14px",
   boxSizing: "border-box",
   border: "1px solid #d1d5db",
-  borderRadius: "7px",
+  borderRadius: "9px",
   outline: "none",
   fontSize: "14px",
-  marginBottom: "14px",
+  marginBottom: "15px",
+  background: "#ffffff",
 }
 
 const labelStyle = {
   display: "block",
   marginBottom: "7px",
-  fontSize: "14px",
+  fontSize: "13px",
+  fontWeight: "600",
   color: "#374151",
 }
 
 const headingStyle = {
-  fontSize: "20px",
+  fontSize: "21px",
   color: "#111827",
-  marginBottom: "20px",
+  marginBottom: "8px",
+}
+
+const descriptionStyle = {
+  fontSize: "13px",
+  lineHeight: "1.5",
+  color: "#6b7280",
+  marginTop: "0",
+  marginBottom: "22px",
 }
 
 const primaryButtonStyle = {
   width: "100%",
-  padding: "12px",
+  padding: "13px",
   border: "none",
-  borderRadius: "7px",
+  borderRadius: "9px",
   background: "#2563eb",
   color: "#ffffff",
   fontSize: "15px",
+  fontWeight: "600",
   cursor: "pointer",
+  boxShadow: "0 4px 10px rgba(37, 99, 235, 0.20)",
 }
 
 const linkButtonStyle = {
   width: "100%",
-  marginTop: "12px",
-  padding: "8px",
+  marginTop: "14px",
+  padding: "9px",
   border: "none",
   background: "transparent",
   color: "#2563eb",
@@ -514,11 +739,48 @@ const linkButtonStyle = {
   cursor: "pointer",
 }
 
-const codeStyle = {
+const modalOverlayStyle = {
+  position: "fixed",
+  inset: "0",
+  background: "rgba(15, 23, 42, 0.55)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: "20px",
+  zIndex: "1000",
+}
+
+const otpModalStyle = {
+  width: "100%",
+  maxWidth: "380px",
+  background: "#ffffff",
+  padding: "32px",
+  borderRadius: "18px",
+  boxShadow: "0 20px 60px rgba(0, 0, 0, 0.20)",
+  boxSizing: "border-box",
+}
+
+const successPopupStyle = {
+  width: "100%",
+  maxWidth: "380px",
+  background: "#ffffff",
+  padding: "35px 30px",
+  borderRadius: "18px",
+  boxShadow: "0 20px 60px rgba(0, 0, 0, 0.20)",
+  boxSizing: "border-box",
   textAlign: "center",
-  marginTop: "20px",
-  color: "#374151",
-  fontSize: "14px",
+}
+
+const successButtonStyle = {
+  width: "100%",
+  padding: "12px",
+  border: "none",
+  borderRadius: "9px",
+  background: "#16a34a",
+  color: "#ffffff",
+  fontSize: "15px",
+  fontWeight: "600",
+  cursor: "pointer",
 }
 
 export default App
